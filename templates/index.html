@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}
+StoneHedge Video
+{% endblock %}
+
+{% block content %}
+
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center">
+    <h1 class="display-4 fw-normal">Телевизоры</h1>
+  </div>
+<!-- Блок переговорок -->
+
+<!--<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">-->
+<!--{% for nuke in nukes %}-->
+<!--  <div class="col">-->
+<!--      <div class="card mb-4 rounded-3 shadow-sm">-->
+<!--        <a href="/about/{{ nukes[nuke].get('id_nuke') }}">-->
+<!--        <div class="card-header py-3 text-bg-primary border-primary bg-dark">-->
+<!--          <h4 class="my-0 fw-normal">{{ nuke }}</h4>-->
+<!--          <p>{{ nukes[nuke].get('ip_nuke') }}</p>-->
+<!--        </div>-->
+<!--        </a>-->
+
+<!--        <div class="card-body">-->
+<!--          {% if nukes[nuke].get('comment') == None %}-->
+<!--            <p>Описания нет</p>-->
+<!--          {% else %}-->
+<!--          <p> {{ nukes[nuke].get('comment') }} </p>-->
+<!--&lt;!&ndash;          <ul class="list-unstyled mt-3 mb-4">&ndash;&gt;-->
+<!--          {% endif %}-->
+
+<!--&lt;!&ndash;          </ul>&ndash;&gt;-->
+<!--          <a href="/about/{{ nukes[nuke].get('id_nuke') }}" class="href">-->
+<!--            <button type="button" id="btnLoad" class="w-100 btn btn-lg btn-dark btn-primary">Управление</button>-->
+<!--          </a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!--  </div>-->
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 mb-3 text-center">
+{% if all_nukes == [] %}
+  Пусто
+{% else %}
+  {% for nuke in all_nukes %}
+    <div class="col">
+        <div class="card mb-4 shadow-sm" style="border-radius: 15px;">
+            <details class="header-nuke bg-dark" style="border-radius: 15px 15px 0 0;">
+                <summary>
+                        <div class="card-header py-3 text-bg-primary border-primary bg-dark"">
+                            <div class="d-flex justify-content-between" >
+                                {% if nuke.status_ping == "1" %}
+                                    <p>&#128994;</p>
+                                {% else %}
+                                    <p>&#128308;</p>
+                                {% endif %}
+                                <h4 class="my-0 fw-normal">{{ nuke.name }}</h4>
+                            </div>
+
+                          <p class="d-flex justify-content-end">{{ nuke.ip }}</p>
+
+                        </div>
+                </summary>
+                {% if nuke.comment == None %}
+                  <p>Описания нет</p>
+                {% else %}
+                  <p> {{ nuke.comment }} </p>
+      <!--          <ul class="list-unstyled mt-3 mb-4">-->
+                {% endif %}
+            </details>
+
+          <div id="block_button_player_form_{{ nuke.id }}" class="block-button">
+                <form id="play_{{ nuke.id }}" method="POST">
+                    <input type="hidden" name="index" value="PlayVideo_{{ nuke.id }}">
+<!--                    <input type="submit" class="btn btn-dark" value="Play">-->
+                    <a onclick="send_play('{{ nuke.id }}')"><img class="btn-play" src="{{ url_for('static', filename='images/play.png') }}" alt=""></a>
+                </form>
+
+                <form id="CheckPlaylist_{{ nuke.id }}" method="POST">
+                    <input type="hidden" name="index" value="CheckPlaylist_{{ nuke.id }}">
+                    <input class="btn btn-sm btn-outline-dark" onclick="send_CheckPlaylist('{{ nuke.id }}')" value="Синхронизация">
+                </form>
+
+                <form id="stop_{{ nuke.id }}" method="POST">
+                    <input type="hidden" name="index" value="PauseVideo_{{ nuke.id }}">
+<!--                    <input type="submit" class="btn btn-dark" value="Stop">-->
+                    <a onclick="send_stop('{{ nuke.id }}')"><img class="btn-stop" src="{{ url_for('static', filename='images/stop.png') }}" alt="stop"></a>
+                </form>
+
+<!--            <button style="padding: 5px, 10px; color: white;" class="bg-dark">Play</button>-->
+<!--            <button style="padding: 5px, 10px; color: white;" class="bg-dark">Pause</button>-->
+          </div>
+          <div class="display-none block-load" id="block_for_load_form_{{ nuke.id }}">
+            <h4>Обработка запроса, подождите!</h4>
+          </div>
+          <div id="div_form_{{ nuke.id }}">
+          <div class="card-body" id="nuke_form_{{ nuke.id }}">
+
+            <form method="POST" id="form_{{ nuke.id }}" class="video_form form-example" data-method="serializeArray">
+              {% for video in all_videos %}
+
+                {% if video in nuke.videos %}
+
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="{{ video[0] }}" name="check_box" id="{{ nuke.id }}_{{ video[0] }}" checked>
+                    <label class="form-check-label" for="{{ nuke.id }}_{{ video[0] }}">
+                      {{ video[1] }}
+                    </label>
+                  </div>
+
+                {% else %}
+
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="{{ video[0] }}" name="check_box" id="{{ nuke.id }}_{{ video[0] }}">
+                  <label class="form-check-label" for="{{ nuke.id }}_{{ video[0] }}" style="color: red;">
+                      {{ video[1] }}
+                  </label>
+                </div>
+
+                {% endif %}
+              {% endfor %}
+
+              <br>
+              <div class="form-example">
+                <input type="hidden" name="index" value="{{ nuke.id }}">
+                      <a class="w-100 btn btn-lg btn-dark btn-primary" onclick="send_form('form_{{ nuke.id }}')">Обновить</a>
+  <!--                    <input type="submit" id="btn-send-test" class="w-100 btn btn-lg btn-dark btn-primary" value="Обновить">-->
+                <div id="msg">{{ test_dict }}</div>
+              </div>
+            </form>
+
+
+  <!--          </ul>-->
+  <!--          <a href="/about/{{ nuke.id }}" class="href">-->
+  <!--            <button type="button" id="btnLoad" class="w-100 btn btn-lg btn-dark btn-primary">Управление</button>-->
+  <!--          </a>-->
+          </div>
+          </div>
+            <div id="block_feedback_status_form_{{ nuke.id }}"></div>
+        </div>
+      </div>
+  {% endfor %}
+{% endif %}
+  </div>
+<!--<div class="row row-cols-1 row-cols-md-3 mb-3 text-center">-->
+<!--{% for nuke in nukes %}-->
+<!--  <div class="col">-->
+<!--      <div class="card mb-4 rounded-3 shadow-sm">-->
+<!--        <div class="card-header py-3 text-bg-primary border-primary bg-dark">-->
+<!--          <h4 class="my-0 fw-normal">{{ nuke }}</h4>-->
+<!--          <p>{{ nukes[nuke].get('ip') }}</p>-->
+<!--        </div>-->
+
+<!--        <div class="card-body">-->
+<!--          {% if nukes[nuke].get('comment') == None %}-->
+<!--            <p>Описания нет</p>-->
+<!--          {% else %}-->
+<!--          <p> {{ nukes[nuke].get('comment') }} </p>-->
+<!--&lt;!&ndash;          <ul class="list-unstyled mt-3 mb-4">&ndash;&gt;-->
+<!--          {% endif %}-->
+
+<!--&lt;!&ndash;          </ul>&ndash;&gt;-->
+<!--          <a href="/about/{{ nukes[nuke].get('id_nuke') }}" class="href">-->
+<!--            <button type="button" class="w-100 btn btn-lg btn-dark btn-primary">Управление</button>-->
+<!--          </a>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--{% endfor %}-->
+<!--  </div>-->
+<!-- конец блока переговорок -->
+<!--  <h2 class="display-6 text-center mb-4">Compare plans</h2>-->
+
+<!--  <div class="table-responsive">-->
+<!--    <table class="table text-center">-->
+<!--      <thead>-->
+<!--        <tr>-->
+<!--          <th style="width: 34%;"></th>-->
+<!--          <th style="width: 22%;">Free</th>-->
+<!--          <th style="width: 22%;">Pro</th>-->
+<!--          <th style="width: 22%;">Enterprise</th>-->
+<!--        </tr>-->
+<!--      </thead>-->
+<!--      <tbody>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Public</th>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Private</th>-->
+<!--          <td></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--      </tbody>-->
+
+<!--      <tbody>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Permissions</th>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Sharing</th>-->
+<!--          <td></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Unlimited members</th>-->
+<!--          <td></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--        <tr>-->
+<!--          <th scope="row" class="text-start">Extra security</th>-->
+<!--          <td></td>-->
+<!--          <td></td>-->
+<!--          <td><svg class="bi" width="24" height="24"><use xlink:href="#check"></use></svg></td>-->
+<!--        </tr>-->
+<!--      </tbody>-->
+<!--    </table>-->
+<!--  </div>-->
+
+{% endblock %}

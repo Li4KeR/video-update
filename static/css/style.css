@@ -1,0 +1,116 @@
+
+.main_logo{
+    height: 15px;
+}
+
+.form_about {
+    display: flex;
+}
+
+.form_about form {
+    padding-right: 10px;
+}
+
+.block_status{
+    display: flex;
+}
+
+.block_status p{
+    border-radius: 8px;
+    padding: 7px;
+    margin: 5px;
+}
+
+.status_ok {
+    background-color: green;
+    color: white;
+    border-radius: 25px;
+}
+
+.status_not_ok {
+    background-color: red;
+    color: white;
+    border-radius: 20px;
+}
+
+.list_all_video {
+    background-color: rgba(24, 24, 24, 0.9);
+    color: white;
+    max-width: 250px;
+    border-radius: 25px;
+    padding: 10px;
+    margin: 5px;
+    margin-bottom: 15px;
+}
+
+.list_all_video li {
+    list-style-type: none;
+    text-decoration: none;
+}
+
+.display-none{
+    display:None;
+}
+
+.header-nuke{
+    text-decoration: none;
+    margin-bottom: 10px
+}
+
+.header-nuke:hover{
+    background-color: white;
+}
+
+.header-nuke p{
+    color: white;
+}
+
+.block-button {
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-video {
+    margin-left: 10px;
+    border-radius: 7px;
+}
+
+.btn-play{
+    max-height: 40px;
+    margin-left: 8px;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+.btn-play:hover {
+    background-color: green;
+    transition: 0.3s;
+
+}
+
+.btn-stop{
+    max-height: 40px;
+    margin-right: 8px;
+    cursor: pointer;
+    border-radius: 100px;
+}
+
+.btn-stop:hover {
+    background-color: red;
+    transition: 0.3s;
+}
+
+.block-delete-video {
+    display: flex;
+    margin: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px black solid;
+}
+
+.disabled {
+    pointer-events: none;
+}
+
+.input-nuke-form {
+    margin-bottom: 15px;
+}
